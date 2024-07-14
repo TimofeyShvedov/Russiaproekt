@@ -6,6 +6,7 @@ telbot = telebot.TeleBot("6783947963:AAEEI_uIxs3tOHFBPK-o9Lxc2AhxBR-n9ak")
 info = {}
 info2 = {}
 
+
 @telbot.message_handler(commands=["start"])
 def soobsh(message):
     print(message)
@@ -41,18 +42,17 @@ def game(message):
     telbot.send_message(message.from_user.id, "Твое число 1?", reply_markup=knopki)
 
 
-
-
 @telbot.message_handler(commands=["play2"])
 def game2(message):
-    info2[message.from_user.id] = {"left":1,"right":100}
+    info2[message.from_user.id] = {"left": 1, "right": 100}
     print(info2)
     knopki = ReplyKeyboardMarkup(resize_keyboard=True)
 
-    knopk = KeyboardButton(text="Да", )
-    knopk2 = KeyboardButton(text="Нет", )
-    knopki.add(knopk, knopk2)
-    telbot.send_message(message.from_user.id, "Твое число 1?", reply_markup=knopki)
+    knopk = KeyboardButton(text="Больше", )
+    knopk2 = KeyboardButton(text="Меньше", )
+    knopk3 = KeyboardButton(text="Угадал", )
+    knopki.add(knopk, knopk2, knopk3)
+    telbot.send_message(message.from_user.id, "Твое число 50?", reply_markup=knopki)
 
 
 @telbot.message_handler(content_types=["text"])
@@ -66,6 +66,21 @@ def soobsh(message):
         if message.text == "Да":
             telbot.send_message(message.from_user.id, "Ez", )
             del info[message.from_user.id]
+    if message.from_user.id in info2:
+        if message.text == "Больше":
+            center = (info2[message.from_user.id]["left"] + info2[message.from_user.id]["right"]) // 2
+            info2[message.from_user.id]["left"] = center + 1
+            center = (info2[message.from_user.id]["left"] + info2[message.from_user.id]["right"]) // 2
+            telbot.send_message(message.from_user.id, f"Увеличиваю, твое число {center}", )
+
+        if message.text == "Меньше":
+            center = (info2[message.from_user.id]["left"] + info2[message.from_user.id]["right"]) // 2
+            info2[message.from_user.id]["right"] = center - 1
+            center = (info2[message.from_user.id]["left"] + info2[message.from_user.id]["right"]) // 2
+            telbot.send_message(message.from_user.id, f"Уменьшаю, твое число{center}", )
+
+        if message.text == "Угадал":
+            telbot.send_message(message.from_user.id, "Ez", )
 
     if message.from_user.id not in info:
 
@@ -77,11 +92,3 @@ def soobsh(message):
 
 
 telbot.polling()
-
-"""
-Узнать что такое API в программировании, можно видео посмотреть) записать в двух словах что это
-
-- При команде /плей2 выводить три кнопки: "больше", "меньше", "угадал" (надписи можно менять, само собой)
-- Сделать проверку, что если юзер нажал на кнопку "больше" (или другая надпись), То просто написать фразу "увеличиваю число"
-
-"""
